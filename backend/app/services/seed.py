@@ -225,8 +225,7 @@ def seed_embeddings(engine):
                     text(
                         """
                         INSERT INTO document_chunks (content, embedding, metadata, source, chunk_index)
-                        VALUES (:content, :embedding::vector, :metadata, :source, :chunk_index)
-                    """
+                        VALUES (:content, CAST(:embedding AS vector), :metadata, :source, :chunk_index)                    """
                     ),
                     {
                         "content": text_to_embed,
