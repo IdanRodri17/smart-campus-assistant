@@ -91,8 +91,8 @@ def process_question(question: str) -> AskResponse | FallbackResponse:
             interaction_id=interaction_id,
         )
 
-    # Step 3: Retrieve context (RAG + structured data)
-    rag_chunks = retrieve_context(cleaned_question)
+    # Step 3: Retrieve context (RAG with metadata filtering + structured data)
+    rag_chunks = retrieve_context(cleaned_question, category=category.value)
     structured_data = get_structured_data(category.value)
 
     logger.info(

@@ -14,13 +14,20 @@ logger = logging.getLogger(__name__)
 CLASSIFICATION_PROMPT = """You are a question classifier for a university campus assistant.
 
 Classify the following student question into EXACTLY ONE category:
-- "schedule": Questions about office hours, exam dates, class times, room availability, timetables
-- "general_info": Questions about campus facilities, services, policies, FAQs, locations, registration
-- "technical_issue": Questions about IT problems, WiFi, student portal, printing, software access
-- "out_of_scope": Questions unrelated to campus (jokes, personal advice, general knowledge)
+- "schedule": Questions about office hours (שעות קבלה), exam dates, class times, room availability, timetables, when/where a professor is available, appointment scheduling, submission deadlines
+- "general_info": Questions about campus facilities, services, policies, FAQs, locations, registration, parking, cafeteria, library
+- "technical_issue": Questions about IT problems, WiFi, student portal, printing, software access, VPN, lab computers
+- "out_of_scope": Questions unrelated to campus (jokes, personal advice, general knowledge, politics)
+
+Examples:
+- "What are the office hours for Dr. Cohen?" → "schedule"
+- "When is the Python exam?" → "schedule"  
+- "Where is the cafeteria?" → "general_info"
+- "I can't log into the portal" → "technical_issue"
+- "Tell me a joke" → "out_of_scope"
 
 Respond with ONLY a JSON object:
-{"category": "<category>", "reasoning": "<one sentence why>"}
+{{"category": "<category>", "reasoning": "<one sentence why>"}}
 
 Student question: "{question}"
 """

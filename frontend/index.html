@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ── Header ── -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Smart Campus Assistant</h1>
+                    <span class="subtitle">CyberPro AI-Powered Campus Info</span>
+                </div>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="status-dot"></span>
+                Online
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Chat Container ── -->
+    <main class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+
+            <!-- Welcome message -->
+            <div class="message bot-message">
+                <div class="message-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/>
+                    </svg>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <p>Welcome! I'm the Smart Campus Assistant. Ask me about:</p>
+                        <div class="suggestion-chips">
+                            <button class="chip" onclick="askSuggestion('What are the office hours for Dr. Cohen?')">📅 Office hours</button>
+                            <button class="chip" onclick="askSuggestion('When is the Python exam?')">📝 Exam schedules</button>
+                            <button class="chip" onclick="askSuggestion('Where is the cafeteria?')">🏫 Campus info</button>
+                            <button class="chip" onclick="askSuggestion('I can\\'t log into the student portal')">💻 Technical help</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── Input Area ── -->
+    <footer class="input-area">
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="questionInput" 
+                placeholder="Ask a question about campus..."
+                maxlength="500"
+                autocomplete="off"
+            >
+            <button id="sendBtn" onclick="sendQuestion()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+        <div class="input-footer">
+            <span class="char-count" id="charCount">0 / 500</span>
+            <span class="powered-by">Powered by RAG + OpenAI</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
