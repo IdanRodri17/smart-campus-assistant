@@ -1,0 +1,39 @@
+%% Smart Campus Assistant — Use Case Diagram
+%% Render at: https://mermaid.live
+
+graph TB
+    subgraph "Smart Campus Assistant"
+        UC1["UC1: Ask Campus Question"]
+        UC2["UC2: View Question History"]
+        UC3["UC3: Rate AI Response"]
+        UC4["UC4: Upload Campus Document"]
+        UC5["UC5: View Analytics Dashboard"]
+        UC6["UC6: Manage Campus Data (CRUD)"]
+        UC7["UC7: Monitor System Health"]
+        UC8["UC8: Fallback to Human Support"]
+    end
+
+    Student(("👨‍🎓 Student"))
+    Admin(("👨‍💼 Admin"))
+    AI(("🤖 AI Service"))
+
+    Student --> UC1
+    Student --> UC2
+    Student --> UC3
+    Student --> UC8
+
+    Admin --> UC4
+    Admin --> UC5
+    Admin --> UC6
+    Admin --> UC7
+
+    UC1 --> AI
+    UC4 --> AI
+
+    UC8 -. "«extends»" .-> UC1
+
+    style UC1 fill:#d4edda,stroke:#28a745
+    style UC8 fill:#fff3cd,stroke:#ffc107
+    style Student fill:#cce5ff,stroke:#004085
+    style Admin fill:#e2d5f1,stroke:#6f42c1
+    style AI fill:#f8d7da,stroke:#dc3545

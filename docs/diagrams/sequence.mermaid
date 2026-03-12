@@ -1,0 +1,40 @@
+%% Smart Campus Assistant — Sequence Diagram (Main Flow)
+%% Render at: https://mermaid.live
+
+sequenceDiagram
+    actor S as Student
+    participant F as React Frontend
+    participant B as FastAPI Backend
+    participant C as Question Classifier
+    participant V as pgvector Store
+    participant DB as Supabase DB
+    participant AI as AI Service (LLM)
+
+    S->>F: 1. Types question in chat UI
+    F->>B: 2. POST /ask { question }
+    
+    Note over B: 3. Validate & sanitize input<br/>(length, encoding, injection guard)
+    
+    B->>C: 4. Classify question
+    C-->>B: 5. category: schedule | general_info | technical_issue
+
+    par RAG + Structured Data (parallel)
+        B->>V: 6. Embed question → vector search<br/>(with metadata category filter)
+        V-->>B: Top-5 relevant chunks
+    and
+        B->>DB: 7. Query structured tables by category
+        DB-->>B: Matching campus_data records
+    end
+
+    B->>AI: 8. System prompt (versioned) + context + question
+    AI-->>B: 9. Answer + confidence score (0.0-1.0)
+
+    alt confidence >= 0.7
+        B->>F: 10a. { answer, category, sources, confidence, prompt_version }
+        F->>S: Display answer with category tag and sources
+    else confidence < 0.7
+        B->>F: 10b. { fallback_message, staff_contact }
+        F->>S: Display fallback with contact info
+    end
+
+    B->>DB: 12. Log interaction (question, answer, category,<br/>confidence, response_time_ms, prompt_version)
