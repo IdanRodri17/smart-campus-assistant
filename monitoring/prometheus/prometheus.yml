@@ -1,0 +1,13 @@
+# Prometheus configuration for Smart Campus Assistant
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "campus-assistant-backend"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          service: "smart-campus-assistant"
+          environment: "production"
