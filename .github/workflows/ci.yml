@@ -1,0 +1,66 @@
+# ══════════════════════════════════════════
+# Smart Campus Assistant — CI Pipeline
+# Triggers on push/PR to master
+# Steps: Lint → Test → Docker Build → Security Scan
+# ══════════════════════════════════════════
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Run linter (flake8)
+        run: |
+          pip install flake8
+          cd backend
+          flake8 app/ --max-line-length=120 --ignore=E501,W503 --count --show-source --statistics
+        continue-on-error: true
+
+      - name: Run unit tests
+        run: |
+          cd backend
+          pytest tests/test_assistant.py -v --tb=short
+
+  docker:
+    name: Docker Build & Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t smart-campus-assistant:${{ github.sha }} .
+
+      - name: Run Trivy security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: smart-campus-assistant:${{ github.sha }}
+          format: "table"
+          exit-code: "0"
+          severity: "CRITICAL,HIGH"
