@@ -10,11 +10,9 @@
 // ══════════════════════════════════════════
 
 // Auto-detect: use localhost for development, deployed URL for production
-const API_BASE = window.location.hostname === "localhost"
-    ? "http://localhost:8000/api"
-    : `${window.location.protocol}//${window.location.hostname.replace('frontend', 'api')}/api`;
+const API_BASE = "https://campus-assistant-api-18ax.onrender.com";
 
-    
+
 // DOM Elements
 const chatMessages = document.getElementById("chatMessages");
 const questionInput = document.getElementById("questionInput");
