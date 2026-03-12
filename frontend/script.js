@@ -10,7 +10,9 @@
 // ══════════════════════════════════════════
 
 // Auto-detect: use localhost for development, deployed URL for production
-const API_BASE = "https://campus-assistant-api-18ax.onrender.com";
+const API_BASE = window.location.hostname === "localhost" 
+    ? "http://localhost:8000/api" 
+    : "https://campus-assistant-api-18ax.onrender.com/api";
 
 
 // DOM Elements
