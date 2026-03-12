@@ -1,0 +1,52 @@
+# Render.com Blueprint — Smart Campus Assistant
+# Connect your GitHub repo and Render deploys automatically
+# https://render.com/docs/blueprint-spec
+
+services:
+  # ── Backend (FastAPI) ──
+  - type: web
+    name: campus-assistant-api
+    runtime: python
+    region: frankfurt
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: gpt-4o-mini
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: CONFIDENCE_THRESHOLD
+        value: "0.7"
+      - key: RAG_TOP_K
+        value: "5"
+      - key: ENV
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+
+  # ── Frontend (Static Site) ──
+  - type: web
+    name: campus-assistant-frontend
+    runtime: static
+    region: frankfurt
+    plan: free
+    rootDir: frontend
+    buildCommand: echo "Static site — no build needed"
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
