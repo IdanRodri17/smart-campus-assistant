@@ -1,0 +1,43 @@
+# Dependencies & virtual environments
+__pycache__
+*.pyc
+*.pyo
+venv/
+.venv/
+node_modules/
+
+# Git
+.git
+.gitignore
+
+# Environment & secrets
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing & Coverage
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Documentation (not needed in image)
+docs/
+*.md
+LICENSE
+
+# Docker (prevent recursive copy)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Misc
+*.zip
+*.tar.gz
+monitoring/
+terraform/
+.github/

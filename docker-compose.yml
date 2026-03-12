@@ -1,0 +1,82 @@
+# ══════════════════════════════════════════
+# Smart Campus Assistant — Docker Compose
+# Run: docker-compose up --build
+# ══════════════════════════════════════════
+
+version: "3.8"
+
+services:
+  # ── Backend (FastAPI) ──
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - ENV=production
+      - DEBUG=false
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - campus-net
+
+  # ── Frontend (Nginx serving static files) ──
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - campus-net
+
+  # ── Prometheus (Metrics collection) ──
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - campus-net
+
+  # ── Grafana (Monitoring dashboard) ──
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=campus2026
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - campus-net
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  campus-net:
+    driver: bridge
