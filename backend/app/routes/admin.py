@@ -4,11 +4,16 @@ All endpoints require the X-Admin-Key header matching ADMIN_API_KEY in config.
 """
 
 import logging
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile, Form
 from sqlalchemy import text
 from app.core.database import get_db_engine
 from app.core.config import get_settings
 from app.models.schemas import CampusRecordCreate, CampusRecordUpdate
+from app.services.document_processor import (
+    ensure_documents_table,
+    process_pdf,
+    embed_and_store_chunks,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +107,107 @@ async def delete_record(record_id: int, _=Depends(verify_admin)):
         conn.execute(text("DELETE FROM campus_data WHERE id = :id"), {"id": record_id})
     logger.info(f"Admin deleted campus record id={record_id}")
     return {"status": "deleted"}
+
+
+@router.post("/upload")
+async def upload_pdf(
+    file: UploadFile,
+    category: str = Form(...),
+    _=Depends(verify_admin),
+):
+    """
+    Upload a PDF, extract its text, chunk it, embed each chunk, and store
+    everything in document_chunks so the RAG pipeline can retrieve it.
+
+    Form fields:
+      - file:     The PDF file (multipart/form-data).
+      - category: One of schedule | general_info | technical_issue |
+                  office_hours | exam_schedules | campus_services
+    """
+    # ── Validate file type ──
+    filename = file.filename or ""
+    if not filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
+    if file.content_type not in ("application/pdf", "application/x-pdf", "binary/octet-stream"):
+        # Some browsers send octet-stream, so we accept it if extension is .pdf
+        if file.content_type and "pdf" not in file.content_type:
+            raise HTTPException(status_code=400, detail="File content type must be PDF.")
+
+    file_bytes = await file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    # ── Ensure documents table exists ──
+    ensure_documents_table()
+
+    # ── Extract text and chunk ──
+    try:
+        result = process_pdf(file_bytes, filename, category)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+    chunks = result["chunks"]
+
+    # ── Create document record (get ID first, update count after) ──
+    engine = get_db_engine()
+    with engine.begin() as conn:
+        row = conn.execute(
+            text(
+                "INSERT INTO documents (filename, category, chunks_count, uploaded_by) "
+                "VALUES (:filename, :category, 0, 'admin') RETURNING id"
+            ),
+            {"filename": filename, "category": category},
+        ).fetchone()
+        document_id = row[0]
+
+    # ── Embed and store all chunks ──
+    try:
+        embed_and_store_chunks(chunks, filename, category, document_id)
+    except Exception as e:
+        logger.error(f"Embedding failed for doc id={document_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Embedding failed: {str(e)}")
+
+    # ── Update final chunk count ──
+    with engine.begin() as conn:
+        conn.execute(
+            text("UPDATE documents SET chunks_count = :count WHERE id = :id"),
+            {"count": len(chunks), "id": document_id},
+        )
+
+    logger.info(
+        f"PDF upload complete: '{filename}' → {len(chunks)} chunks, doc id={document_id}"
+    )
+    return {
+        "message": f"Successfully processed '{filename}'",
+        "filename": filename,
+        "chunks_count": len(chunks),
+        "document_id": document_id,
+        "category": category,
+    }
+
+
+@router.get("/documents")
+async def list_documents(_=Depends(verify_admin)):
+    """Return all uploaded PDF documents."""
+    ensure_documents_table()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT id, filename, category, chunks_count, uploaded_at "
+                "FROM documents ORDER BY uploaded_at DESC"
+            )
+        ).fetchall()
+    return [
+        {
+            "id": r[0],
+            "filename": r[1],
+            "category": r[2],
+            "chunks_count": r[3],
+            "uploaded_at": str(r[4]),
+        }
+        for r in rows
+    ]
 
 
 @router.post("/sync-embeddings")

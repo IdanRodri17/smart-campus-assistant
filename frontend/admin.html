@@ -153,6 +153,41 @@
         /* ── Empty state ── */
         .empty-state { text-align: center; padding: 48px; color: var(--text-light); }
         .empty-state p { margin-top: 8px; font-size: 13px; }
+
+        /* ── PDF Upload ── */
+        .upload-card {
+            background: var(--surface); border: 2px dashed var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+            transition: border-color 0.2s;
+        }
+        .upload-card:focus-within { border-color: var(--primary); }
+        .upload-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+        .upload-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+        .upload-field { display: flex; flex-direction: column; gap: 6px; }
+        .upload-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .upload-field input[type="file"] {
+            font-size: 13px; font-family: var(--font); color: var(--text);
+            border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; background: var(--bg); cursor: pointer;
+            width: 280px;
+        }
+        .upload-field select {
+            height: 40px; padding: 0 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 13px; font-family: var(--font);
+            color: var(--text); background: var(--bg); cursor: pointer;
+        }
+        .upload-status {
+            margin-top: 14px; font-size: 13px; padding: 10px 14px;
+            border-radius: 8px; display: none;
+        }
+        .upload-status.loading { background: #eff6ff; color: #1d4ed8; display: block; }
+        .upload-status.success { background: var(--primary-light); color: var(--primary); display: block; }
+        .upload-status.error   { background: #fef2f2; color: var(--error); display: block; }
+
+        /* ── Documents table ── */
+        .cat-office_hours    { background: #fce4ec; color: #c62828; }
+        .cat-exam_schedules  { background: #e8f4fd; color: #1565c0; }
+        .cat-campus_services { background: #e8f5e9; color: #2e7d32; }
     </style>
 </head>
 <body>
@@ -215,6 +250,52 @@
             ⚠️ You have unsaved embedding changes. Click <strong>Sync Embeddings</strong> in the header so the AI uses your latest content.
         </div>
 
+        <!-- ── PDF Upload ── -->
+        <div class="upload-card">
+            <h2>📄 Upload PDF Document</h2>
+            <div class="upload-row">
+                <div class="upload-field">
+                    <label>PDF File</label>
+                    <input type="file" id="pdfFile" accept=".pdf">
+                </div>
+                <div class="upload-field">
+                    <label>Category</label>
+                    <select id="pdfCategory">
+                        <option value="schedule">📅 Schedule</option>
+                        <option value="general_info">ℹ️ General Info</option>
+                        <option value="technical_issue">🔧 Technical Issue</option>
+                        <option value="office_hours">🕐 Office Hours</option>
+                        <option value="exam_schedules">📝 Exam Schedules</option>
+                        <option value="campus_services">🏫 Campus Services</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="uploadPdf()">⬆️ Upload & Index</button>
+            </div>
+            <div class="upload-status" id="uploadStatus"></div>
+        </div>
+
+        <!-- Uploaded Documents list -->
+        <div class="table-header">
+            <h2>Uploaded Documents <span class="record-count" id="docCount"></span></h2>
+            <button class="btn btn-secondary" onclick="loadDocuments()">↺ Refresh</button>
+        </div>
+        <div class="table-wrap" style="margin-bottom:32px">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Filename</th>
+                        <th>Category</th>
+                        <th>Chunks</th>
+                        <th>Uploaded</th>
+                    </tr>
+                </thead>
+                <tbody id="docsBody">
+                    <tr><td colspan="5" class="empty-state">No PDFs uploaded yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Records table -->
         <div class="table-header">
             <h2>Campus Records <span class="record-count" id="recordCount"></span></h2>
@@ -271,6 +352,7 @@ async function connect() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
     renderRecords(await res.json());
+    loadDocuments();
 }
 
 function logout() {
@@ -406,8 +488,93 @@ async function apiReq(method, path, body) {
     }).catch(e => ({ ok: false, text: () => e.message }));
 }
 
+// ── PDF Upload ────────────────────────────────────────────────────────────────
+async function uploadPdf() {
+    const fileInput = document.getElementById("pdfFile");
+    const category  = document.getElementById("pdfCategory").value;
+    const status    = document.getElementById("uploadStatus");
+
+    if (!fileInput.files.length) {
+        setUploadStatus("error", "Please select a PDF file first.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+        setUploadStatus("error", "Only PDF files are accepted.");
+        return;
+    }
+
+    setUploadStatus("loading", `⏳ Uploading and indexing "${file.name}"… this may take a moment.`);
+
+    // Build multipart/form-data — DO NOT set Content-Type manually,
+    // the browser adds the correct boundary automatically.
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("category", category);
+
+    try {
+        const res = await fetch(API_BASE + "/upload", {
+            method: "POST",
+            headers: { "X-Admin-Key": apiKey },   // no Content-Type here!
+            body: formData,
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            setUploadStatus(
+                "success",
+                `✓ "${data.filename}" indexed successfully — ${data.chunks_count} chunks stored (doc #${data.document_id})`
+            );
+            fileInput.value = "";
+            await loadDocuments();
+        } else {
+            const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+            setUploadStatus("error", `✗ Upload failed: ${err.detail}`);
+        }
+    } catch (e) {
+        setUploadStatus("error", `✗ Network error: ${e.message}`);
+    }
+}
+
+function setUploadStatus(type, message) {
+    const el = document.getElementById("uploadStatus");
+    el.className = `upload-status ${type}`;
+    el.textContent = message;
+}
+
+async function loadDocuments() {
+    const res = await apiReq("GET", "/documents");
+    if (!res.ok) return;
+    const docs = await res.json();
+    const body = document.getElementById("docsBody");
+    document.getElementById("docCount").textContent = `(${docs.length})`;
+
+    if (docs.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" class="empty-state">No PDFs uploaded yet.</td></tr>`;
+        return;
+    }
+
+    body.innerHTML = docs.map(d => `
+        <tr>
+            <td style="color:var(--text-light);font-size:12px">#${d.id}</td>
+            <td style="font-weight:600">📄 ${esc(d.filename)}</td>
+            <td><span class="cat-badge cat-${d.category}">${formatCat(d.category)}</span></td>
+            <td style="font-family:monospace">${d.chunks_count} chunks</td>
+            <td class="date-cell">${d.uploaded_at.slice(0, 10)}</td>
+        </tr>
+    `).join("");
+}
+
 function formatCat(c) {
-    return { schedule: "📅 Schedule", general_info: "ℹ️ General Info", technical_issue: "🔧 Technical" }[c] || c;
+    return {
+        schedule: "📅 Schedule",
+        general_info: "ℹ️ General Info",
+        technical_issue: "🔧 Technical",
+        office_hours: "🕐 Office Hours",
+        exam_schedules: "📝 Exam Schedules",
+        campus_services: "🏫 Campus Services",
+    }[c] || c;
 }
 
 function esc(str) {
