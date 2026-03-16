@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     llm_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-small"
 
+    # Admin
+    admin_api_key: str = ""
+
     # Redis (optional — caching layer for embeddings and classifications)
     redis_url: str = ""
 

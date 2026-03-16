@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Admin — Content Manager</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1a5c3a;
+            --primary-light: #e8f5ee;
+            --accent: #2d8a56;
+            --bg: #f6f7f9;
+            --surface: #ffffff;
+            --text: #1a1d23;
+            --text-secondary: #5f6570;
+            --text-light: #8b909a;
+            --border: #e2e5ea;
+            --error: #c0392b;
+            --warning: #e67e22;
+            --radius: 10px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── Login ── */
+        #loginScreen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+        .login-card {
+            background: var(--surface); border-radius: 16px; box-shadow: var(--shadow);
+            padding: 40px; width: 380px; text-align: center;
+        }
+        .login-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+        .login-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 28px; }
+        .login-card input {
+            width: 100%; height: 44px; padding: 0 14px; border: 2px solid var(--border);
+            border-radius: var(--radius); font-size: 14px; font-family: var(--font);
+            margin-bottom: 12px; outline: none; transition: border-color 0.2s;
+        }
+        .login-card input:focus { border-color: var(--primary); }
+        .login-error { color: var(--error); font-size: 13px; margin-top: 8px; min-height: 20px; }
+        .logo-badge {
+            width: 56px; height: 56px; background: var(--primary); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 26px;
+        }
+
+        /* ── Dashboard ── */
+        #dashboard { display: none; }
+
+        header {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 0 32px; position: sticky; top: 0; z-index: 10;
+        }
+        .header-inner {
+            max-width: 1100px; margin: 0 auto; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-inner h1 { font-size: 16px; font-weight: 700; }
+        .header-inner span { font-size: 12px; color: var(--text-light); margin-left: 10px; }
+        .header-actions { display: flex; gap: 10px; }
+
+        main { max-width: 1100px; margin: 32px auto; padding: 0 32px 64px; }
+
+        /* ── Buttons ── */
+        .btn {
+            height: 38px; padding: 0 16px; border: none; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+            font-family: var(--font); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #0f3d25; }
+        .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--border); }
+        .btn-danger { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
+        .btn-danger:hover { background: #fee2e2; }
+        .btn-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        .btn-warning:hover { background: #fef3c7; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Form Card ── */
+        .form-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+        }
+        .form-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+        .form-grid { display: grid; grid-template-columns: 160px 1fr; gap: 12px; margin-bottom: 12px; }
+        .form-grid label { font-size: 13px; font-weight: 600; color: var(--text-secondary); padding-top: 10px; }
+        .form-grid select, .form-grid input, .form-grid textarea {
+            width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 14px; font-family: var(--font);
+            color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s;
+        }
+        .form-grid select:focus, .form-grid input:focus, .form-grid textarea:focus {
+            border-color: var(--primary); background: white;
+        }
+        .form-grid textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+        .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+
+        /* ── Notice ── */
+        .notice {
+            background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
+            padding: 10px 14px; font-size: 13px; color: #92400e; margin-bottom: 20px;
+        }
+
+        /* ── Table ── */
+        .table-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .table-header h2 { font-size: 15px; font-weight: 700; }
+        .record-count {
+            font-size: 12px; color: var(--text-light); margin-left: 8px; font-weight: 400;
+        }
+
+        .table-wrap { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead { background: var(--bg); }
+        th {
+            padding: 11px 16px; text-align: left; font-weight: 600; font-size: 12px;
+            color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;
+            border-bottom: 1px solid var(--border);
+        }
+        td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafbfc; }
+
+        .cat-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 5px;
+            font-size: 11px; font-weight: 600;
+        }
+        .cat-schedule { background: #e8f4fd; color: #1565c0; }
+        .cat-general_info { background: #f3e8fd; color: #7b1fa2; }
+        .cat-technical_issue { background: #fff3e0; color: #e65100; }
+
+        .content-preview { color: var(--text-secondary); max-width: 420px; line-height: 1.5; }
+        .date-cell { color: var(--text-light); white-space: nowrap; }
+        .actions-cell { display: flex; gap: 8px; }
+
+        /* ── Sync status ── */
+        #syncStatus {
+            font-size: 12px; padding: 4px 10px; border-radius: 6px;
+            display: none; align-items: center; gap: 6px;
+        }
+        #syncStatus.success { background: var(--primary-light); color: var(--primary); display: inline-flex; }
+        #syncStatus.error { background: #fef2f2; color: var(--error); display: inline-flex; }
+
+        /* ── Empty state ── */
+        .empty-state { text-align: center; padding: 48px; color: var(--text-light); }
+        .empty-state p { margin-top: 8px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<!-- ── Login Screen ── -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="logo-badge">🏫</div>
+        <h1>Campus Admin</h1>
+        <p>Enter your admin key to manage campus content</p>
+        <input type="password" id="apiKeyInput" placeholder="Admin API key" onkeydown="if(event.key==='Enter') connect()">
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="connect()">Connect</button>
+        <p class="login-error" id="loginError"></p>
+    </div>
+</div>
+
+<!-- ── Dashboard ── -->
+<div id="dashboard">
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>🏫 Campus Content Manager</h1>
+                <span>Smart Campus Assistant</span>
+            </div>
+            <div class="header-actions">
+                <span id="syncStatus"></span>
+                <button class="btn btn-warning" onclick="syncEmbeddings()">🔄 Sync Embeddings</button>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Add / Edit form -->
+        <div class="form-card">
+            <h2 id="formHeading">➕ Add New Record</h2>
+            <div class="form-grid">
+                <label>Category</label>
+                <select id="fCategory">
+                    <option value="schedule">📅 Schedule</option>
+                    <option value="general_info">ℹ️ General Info</option>
+                    <option value="technical_issue">🔧 Technical Issue</option>
+                </select>
+
+                <label>Title</label>
+                <input type="text" id="fTitle" placeholder="e.g. Dr. Cohen Office Hours" maxlength="200">
+
+                <label>Content</label>
+                <textarea id="fContent" placeholder="Full details that students can ask about…"></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord()">💾 Save Record</button>
+            </div>
+        </div>
+
+        <!-- Sync notice -->
+        <div class="notice" id="syncNotice" style="display:none">
+            ⚠️ You have unsaved embedding changes. Click <strong>Sync Embeddings</strong> in the header so the AI uses your latest content.
+        </div>
+
+        <!-- Records table -->
+        <div class="table-header">
+            <h2>Campus Records <span class="record-count" id="recordCount"></span></h2>
+            <button class="btn btn-secondary" onclick="loadRecords()">↺ Refresh</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Updated</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody">
+                    <tr><td colspan="6" class="empty-state">Loading…</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:8000/api/admin"
+    : "https://campus-assistant-api-18ax.onrender.com/api/admin";
+
+let apiKey = "";
+let editingId = null;   // null = adding new, number = editing existing
+let pendingSync = false; // track if embeddings need syncing
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+async function connect() {
+    const key = document.getElementById("apiKeyInput").value.trim();
+    if (!key) return;
+
+    // Test the key by trying to load records
+    const res = await fetch(API_BASE + "/records", {
+        headers: { "X-Admin-Key": key },
+    }).catch(() => null);
+
+    if (!res || res.status === 401 || res.status === 503) {
+        document.getElementById("loginError").textContent = "Invalid key or admin not configured.";
+        return;
+    }
+
+    apiKey = key;
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    renderRecords(await res.json());
+}
+
+function logout() {
+    apiKey = "";
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("apiKeyInput").value = "";
+    document.getElementById("loginError").textContent = "";
+}
+
+// ── Records ───────────────────────────────────────────────────────────────────
+async function loadRecords() {
+    const res = await apiReq("GET", "/records");
+    if (res.ok) renderRecords(await res.json());
+}
+
+function renderRecords(records) {
+    const body = document.getElementById("recordsBody");
+    document.getElementById("recordCount").textContent = `(${records.length})`;
+
+    if (records.length === 0) {
+        body.innerHTML = `<tr><td colspan="6"><div class="empty-state">No records yet.<p>Use the form above to add campus information.</p></div></td></tr>`;
+        return;
+    }
+
+    body.innerHTML = records.map(r => `
+        <tr>
+            <td style="color:var(--text-light);font-size:12px">#${r.id}</td>
+            <td><span class="cat-badge cat-${r.category}">${formatCat(r.category)}</span></td>
+            <td style="font-weight:600">${esc(r.title)}</td>
+            <td><div class="content-preview">${esc(r.content.length > 140 ? r.content.slice(0, 140) + "…" : r.content)}</div></td>
+            <td class="date-cell">${r.updated_at.slice(0, 10)}</td>
+            <td class="actions-cell">
+                <button class="btn btn-secondary" onclick="startEdit(${r.id}, '${esc(r.category)}', ${JSON.stringify(esc(r.title))}, ${JSON.stringify(esc(r.content))})">✏️ Edit</button>
+                <button class="btn btn-danger" onclick="deleteRecord(${r.id}, ${JSON.stringify(esc(r.title))})">🗑️ Delete</button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+function resetForm() {
+    editingId = null;
+    document.getElementById("formHeading").textContent = "➕ Add New Record";
+    document.getElementById("fCategory").value = "schedule";
+    document.getElementById("fTitle").value = "";
+    document.getElementById("fContent").value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function startEdit(id, category, title, content) {
+    editingId = id;
+    document.getElementById("formHeading").textContent = `✏️ Editing Record #${id}`;
+    document.getElementById("fCategory").value = category;
+    document.getElementById("fTitle").value = title;
+    document.getElementById("fContent").value = content;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function saveRecord() {
+    const body = {
+        category: document.getElementById("fCategory").value,
+        title: document.getElementById("fTitle").value.trim(),
+        content: document.getElementById("fContent").value.trim(),
+    };
+
+    if (!body.title || !body.content) {
+        alert("Title and content are required.");
+        return;
+    }
+
+    const res = editingId
+        ? await apiReq("PUT", `/records/${editingId}`, body)
+        : await apiReq("POST", "/records", body);
+
+    if (res.ok) {
+        resetForm();
+        await loadRecords();
+        showSyncNotice();
+    } else {
+        alert("Save failed: " + (await res.text()));
+    }
+}
+
+async function deleteRecord(id, title) {
+    if (!confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
+    const res = await apiReq("DELETE", `/records/${id}`);
+    if (res.ok) {
+        await loadRecords();
+        showSyncNotice();
+    } else {
+        alert("Delete failed.");
+    }
+}
+
+// ── Embeddings sync ───────────────────────────────────────────────────────────
+async function syncEmbeddings() {
+    const btn = document.querySelector(".btn-warning");
+    btn.disabled = true;
+    btn.textContent = "⏳ Syncing…";
+
+    const res = await apiReq("POST", "/sync-embeddings");
+    btn.disabled = false;
+    btn.textContent = "🔄 Sync Embeddings";
+
+    const status = document.getElementById("syncStatus");
+    if (res.ok) {
+        pendingSync = false;
+        document.getElementById("syncNotice").style.display = "none";
+        status.className = "success";
+        status.textContent = "✓ Embeddings up to date";
+    } else {
+        status.className = "error";
+        status.textContent = "✗ Sync failed";
+    }
+    setTimeout(() => { status.className = ""; }, 4000);
+}
+
+function showSyncNotice() {
+    pendingSync = true;
+    document.getElementById("syncNotice").style.display = "block";
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+async function apiReq(method, path, body) {
+    return fetch(API_BASE + path, {
+        method,
+        headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Key": apiKey,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+    }).catch(e => ({ ok: false, text: () => e.message }));
+}
+
+function formatCat(c) {
+    return { schedule: "📅 Schedule", general_info: "ℹ️ General Info", technical_issue: "🔧 Technical" }[c] || c;
+}
+
+function esc(str) {
+    const d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+}
+</script>
+
+</body>
+</html>

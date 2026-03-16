@@ -11,6 +11,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from slowapi.errors import RateLimitExceeded
 
 from app.routes.ask import router as ask_router
+from app.routes.admin import router as admin_router
 from app.core.config import get_settings
 from app.core.limiter import limiter
 
@@ -67,6 +68,7 @@ Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 # ── Routes ──
 app.include_router(ask_router, prefix="/api", tags=["Campus Assistant"])
+app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
 
 
 @app.get("/", tags=["Root"])

@@ -55,7 +55,8 @@ async def ask_question(request: Request, body: AskRequest):
     logger.info(f"Received question: '{question[:80]}...'")
 
     try:
-        response = process_question(question)
+        history = [msg.model_dump() for msg in body.history]
+        response = process_question(question, history=history)
         return response
 
     except Exception as e:

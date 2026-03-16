@@ -23,6 +23,13 @@ class QuestionCategory(str, Enum):
 # ── Request Models ──
 
 
+class HistoryMessage(BaseModel):
+    """A single turn in the conversation history."""
+
+    role: str = Field(..., description="'user' or 'assistant'")
+    content: str = Field(..., max_length=1000)
+
+
 class AskRequest(BaseModel):
     """Request body for POST /ask endpoint."""
 
@@ -32,6 +39,11 @@ class AskRequest(BaseModel):
         max_length=500,
         description="The student's natural-language question",
         examples=["What are the office hours for Dr. Cohen?"],
+    )
+    history: list[HistoryMessage] = Field(
+        default_factory=list,
+        max_length=10,
+        description="Previous turns in the conversation (max 10 messages = 5 turns)",
     )
 
 
@@ -90,3 +102,22 @@ class ErrorResponse(BaseModel):
     error: str
     detail: Optional[str] = None
     status_code: int
+
+
+# ── Admin Models ──
+
+
+class CampusRecordCreate(BaseModel):
+    """Request body for creating a campus data record."""
+
+    category: str = Field(..., description="schedule | general_info | technical_issue")
+    title: str = Field(..., min_length=1, max_length=200)
+    content: str = Field(..., min_length=1)
+
+
+class CampusRecordUpdate(BaseModel):
+    """Request body for updating a campus data record (all fields optional)."""
+
+    category: Optional[str] = None
+    title: Optional[str] = None
+    content: Optional[str] = None

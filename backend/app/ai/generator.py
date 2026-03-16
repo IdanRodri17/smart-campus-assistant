@@ -91,6 +91,7 @@ def generate_answer(
     rag_chunks: list[dict],
     structured_data: list[dict],
     prompt_version: str | None = None,
+    history: list[dict] | None = None,
 ) -> dict:
     """
     Generate an AI answer using the LLM with RAG context.
@@ -101,6 +102,7 @@ def generate_answer(
         rag_chunks: Retrieved context chunks from pgvector.
         structured_data: Structured data from campus_data table.
         prompt_version: Override prompt version for A/B testing.
+        history: Previous conversation turns [{role, content}, ...].
 
     Returns:
         Dict with 'answer', 'confidence', 'sources_used', 'tokens_used', 'inference_time_ms'.
@@ -137,13 +139,17 @@ def generate_answer(
 
     start_time = time.time()
 
+    # Build message list: system prompt → conversation history → current question
+    messages = [{"role": "system", "content": system_prompt}]
+    for msg in (history or [])[-6:]:  # cap at last 6 messages (3 turns)
+        if msg.get("role") in ("user", "assistant"):
+            messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": question})
+
     try:
         response = client.chat.completions.create(
             model=settings.llm_model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": question},
-            ],
+            messages=messages,
             temperature=0.3,  # Low temperature for factual answers
             max_tokens=500,
         )

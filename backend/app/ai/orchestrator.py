@@ -96,7 +96,10 @@ def log_interaction(
         logger.error(f"[{interaction_id}] Failed to log interaction: {e}")
 
 
-def process_question(question: str) -> AskResponse | FallbackResponse:
+def process_question(
+    question: str,
+    history: list[dict] | None = None,
+) -> AskResponse | FallbackResponse:
     """
     Main AI pipeline — processes a student question end-to-end.
 
@@ -163,6 +166,7 @@ def process_question(question: str) -> AskResponse | FallbackResponse:
             category=category,
             rag_chunks=rag_chunks,
             structured_data=structured_data,
+            history=history,
         )
     except Exception as e:
         logger.error(f"[{interaction_id}] LLM generation failed: {e}")

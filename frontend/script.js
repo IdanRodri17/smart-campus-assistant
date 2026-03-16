@@ -15,6 +15,10 @@ const API_BASE = window.location.hostname === "localhost"
     : "https://campus-assistant-api-18ax.onrender.com/api";
 
 
+// Conversation history — kept in memory, sent with every request so the
+// LLM can refer back to previous answers in the same session.
+let conversationHistory = [];
+
 // DOM Elements
 const chatMessages = document.getElementById("chatMessages");
 const questionInput = document.getElementById("questionInput");
@@ -77,7 +81,7 @@ async function sendQuestion() {
         const response = await fetch(API_BASE + "/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: question }),
+            body: JSON.stringify({ question: question, history: conversationHistory }),
         });
 
         // Remove typing indicator
@@ -97,6 +101,10 @@ async function sendQuestion() {
             addFallbackMessage(data);
         } else {
             addBotMessage(data);
+            // Only successful answers are added to history so the LLM has
+            // reliable context — fallbacks are intentionally excluded.
+            conversationHistory.push({ role: "user", content: question });
+            conversationHistory.push({ role: "assistant", content: data.answer });
         }
 
     } catch (error) {
