@@ -4,17 +4,20 @@ API routes for the Smart Campus Assistant.
 
 import logging
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from app.models.schemas import (
     AskRequest,
     AskResponse,
     FallbackResponse,
     HealthResponse,
     ErrorResponse,
+    RatingRequest,
 )
+from sqlalchemy import text
 from app.ai.orchestrator import process_question
-from app.core.database import check_db_health
+from app.core.database import check_db_health, get_db_engine
 from app.core.config import get_settings
+from app.core.limiter import limiter, RATE_LIMIT
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +35,8 @@ router = APIRouter()
     summary="Ask a campus question",
     description="Submit a natural-language question about campus information and receive an AI-generated answer.",
 )
-async def ask_question(request: AskRequest):
+@limiter.limit(RATE_LIMIT)
+async def ask_question(request: Request, body: AskRequest):
     """
     Main endpoint — processes a student question through the full AI pipeline.
 
@@ -41,7 +45,7 @@ async def ask_question(request: AskRequest):
     settings = get_settings()
 
     # Input validation (beyond Pydantic's min/max length)
-    question = request.question.strip()
+    question = body.question.strip()
     if len(question) < 3:
         raise HTTPException(
             status_code=400,
@@ -60,6 +64,38 @@ async def ask_question(request: AskRequest):
             status_code=503,
             detail="Our AI service is temporarily unavailable. Please try again shortly.",
         )
+
+
+@router.post(
+    "/feedback",
+    summary="Submit answer feedback",
+    description="Rate an answer as helpful (thumbs up) or not helpful (thumbs down).",
+)
+@limiter.limit("60/minute")
+async def submit_feedback(request: Request, body: RatingRequest):
+    """Store a thumbs-up / thumbs-down rating for a previous interaction."""
+    try:
+        engine = get_db_engine()
+        with engine.begin() as conn:
+            conn.execute(
+                text(
+                    """
+                    INSERT INTO ratings (interaction_id, rating, feedback)
+                    VALUES (:interaction_id, :rating, :feedback)
+                    """
+                ),
+                {
+                    "interaction_id": body.interaction_id,
+                    "rating": body.rating,
+                    "feedback": body.feedback,
+                },
+            )
+        logger.info(f"Feedback recorded for interaction {body.interaction_id}: {'👍' if body.rating else '👎'}")
+        return {"status": "ok"}
+
+    except Exception as e:
+        logger.error(f"Failed to save feedback: {e}")
+        raise HTTPException(status_code=503, detail="Could not save feedback.")
 
 
 @router.get(

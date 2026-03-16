@@ -120,6 +120,30 @@ function askSuggestion(question) {
 }
 
 
+/**
+ * Submit a thumbs-up or thumbs-down rating for a bot answer.
+ * Uses the button element itself to read interaction_id and rating from data attributes.
+ */
+async function submitFeedback(btn) {
+    const interactionId = btn.dataset.id;
+    const rating = btn.dataset.rating === "true";
+    const row = document.getElementById("feedback-" + interactionId);
+
+    // Optimistic UI — update immediately, don't wait for the server
+    row.innerHTML = '<span class="feedback-thanks">✓ Thanks for your feedback!</span>';
+
+    try {
+        await fetch(API_BASE + "/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ interaction_id: interactionId, rating: rating }),
+        });
+    } catch (e) {
+        console.error("Feedback submit failed:", e);
+    }
+}
+
+
 // ══════════════════════════════════════════
 // Message Rendering
 // ══════════════════════════════════════════
@@ -167,6 +191,11 @@ function addBotMessage(data) {
                     <span class="tag tag-${data.category}">${categoryLabel}</span>
                     <span class="tag tag-confidence ${confidenceClass}">${confidencePercent}% confidence</span>
                     <span class="tag-time">${data.response_time_ms}ms</span>
+                </div>
+                <div class="feedback-row" id="feedback-${escapeHtml(data.interaction_id)}">
+                    <span class="feedback-label">Was this helpful?</span>
+                    <button class="feedback-btn" data-id="${escapeHtml(data.interaction_id)}" data-rating="true" onclick="submitFeedback(this)" title="Helpful">👍</button>
+                    <button class="feedback-btn" data-id="${escapeHtml(data.interaction_id)}" data-rating="false" onclick="submitFeedback(this)" title="Not helpful">👎</button>
                 </div>
             </div>
         </div>

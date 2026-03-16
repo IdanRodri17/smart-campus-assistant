@@ -12,13 +12,25 @@ from openai import OpenAI
 from sqlalchemy import text
 from app.core.config import get_settings
 from app.core.database import get_db_engine
+from app.core.cache import cache_get, cache_set, EMBEDDING_TTL
 
 logger = logging.getLogger(__name__)
+
+# Module-level singleton — created once, reused for every request
+_client: OpenAI | None = None
+
+
+def _get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=get_settings().openai_api_key)
+    return _client
 
 
 def generate_embedding(text_input: str) -> list[float]:
     """
     Generate a vector embedding for a text input using OpenAI.
+    Checks Redis cache first — a cache hit avoids the API call entirely.
 
     Args:
         text_input: Text to embed.
@@ -26,15 +38,20 @@ def generate_embedding(text_input: str) -> list[float]:
     Returns:
         List of floats representing the embedding vector.
     """
-    settings = get_settings()
-    client = OpenAI(api_key=settings.openai_api_key)
+    cached = cache_get("emb", text_input)
+    if cached is not None:
+        logger.debug("Embedding cache hit")
+        return cached
 
-    response = client.embeddings.create(
+    settings = get_settings()
+    response = _get_client().embeddings.create(
         model=settings.embedding_model,
         input=text_input,
     )
+    embedding = response.data[0].embedding
 
-    return response.data[0].embedding
+    cache_set("emb", text_input, embedding, EMBEDDING_TTL)
+    return embedding
 
 
 def search_similar_chunks(

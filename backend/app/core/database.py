@@ -1,21 +1,12 @@
 """
-Supabase client initialization and database utilities.
-Uses both the Supabase Python client (for auth/storage) and
-direct PostgreSQL via SQLAlchemy (for pgvector queries).
+Database utilities for Smart Campus Assistant.
+Uses direct PostgreSQL via SQLAlchemy for all queries (including pgvector).
 """
 
-from supabase import create_client, Client
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from app.core.config import get_settings
 from functools import lru_cache
-
-
-@lru_cache()
-def get_supabase_client() -> Client:
-    """Get the Supabase client for API operations."""
-    settings = get_settings()
-    return create_client(settings.supabase_url, settings.supabase_service_role_key)
 
 
 @lru_cache()

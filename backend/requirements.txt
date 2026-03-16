@@ -19,6 +19,12 @@ langchain-openai==0.3.0
 langchain-community==0.3.14
 tiktoken==0.8.0
 
+# Caching
+redis==5.2.1
+
+# Rate limiting
+slowapi==0.1.9
+
 # Monitoring
 prometheus-client==0.21.1
 prometheus-fastapi-instrumentator==7.0.2

@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     llm_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-small"
 
+    # Redis (optional — caching layer for embeddings and classifications)
+    redis_url: str = ""
+
     # App Config
     confidence_threshold: float = 0.7
     rag_top_k: int = 5

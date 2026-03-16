@@ -37,7 +37,6 @@ jobs:
           pip install flake8
           cd backend
           flake8 app/ --max-line-length=120 --ignore=E501,W503 --count --show-source --statistics
-        continue-on-error: true
 
       - name: Run unit tests
         run: |
@@ -62,5 +61,5 @@ jobs:
         with:
           image-ref: smart-campus-assistant:${{ github.sha }}
           format: "table"
-          exit-code: "0"
+          exit-code: "1"
           severity: "CRITICAL,HIGH"

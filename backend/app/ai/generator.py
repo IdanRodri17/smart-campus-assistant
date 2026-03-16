@@ -13,6 +13,16 @@ from app.models.schemas import QuestionCategory
 
 logger = logging.getLogger(__name__)
 
+# Module-level singleton — created once, reused for every request
+_client: OpenAI | None = None
+
+
+def _get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=get_settings().openai_api_key)
+    return _client
+
 
 # ══════════════════════════════════════════
 # System Prompt Versions (for A/B testing)
@@ -96,7 +106,7 @@ def generate_answer(
         Dict with 'answer', 'confidence', 'sources_used', 'tokens_used', 'inference_time_ms'.
     """
     settings = get_settings()
-    client = OpenAI(api_key=settings.openai_api_key)
+    client = _get_client()
 
     version = prompt_version or ACTIVE_PROMPT_VERSION
     system_prompt_template = SYSTEM_PROMPTS.get(version, SYSTEM_PROMPTS["v2"])

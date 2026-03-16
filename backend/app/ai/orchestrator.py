@@ -76,7 +76,7 @@ def log_interaction(
                     :response_time_ms, :tokens_used, :prompt_version, :is_fallback)
             """
         )
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(
                 query,
                 {
@@ -91,7 +91,6 @@ def log_interaction(
                     "is_fallback": is_fallback,
                 },
             )
-            conn.commit()
         logger.info(f"[{interaction_id}] Interaction logged to database")
     except Exception as e:
         logger.error(f"[{interaction_id}] Failed to log interaction: {e}")

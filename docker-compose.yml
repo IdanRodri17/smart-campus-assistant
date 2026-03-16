@@ -18,6 +18,9 @@ services:
     environment:
       - ENV=production
       - DEBUG=false
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
@@ -37,6 +40,15 @@ services:
       - ./frontend:/usr/share/nginx/html:ro
     depends_on:
       - backend
+    restart: unless-stopped
+    networks:
+      - campus-net
+
+  # ── Redis (Caching layer for embeddings and classifications) ──
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
     restart: unless-stopped
     networks:
       - campus-net

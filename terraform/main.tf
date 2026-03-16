@@ -1,9 +1,6 @@
 # ══════════════════════════════════════════
 # Smart Campus Assistant — Infrastructure as Code
 # Defines Supabase project resources declaratively
-# 
-# This demonstrates IaC mindset for DevOps track.
-# In production, this would manage the full cloud stack.
 #
 # Usage:
 #   terraform init
