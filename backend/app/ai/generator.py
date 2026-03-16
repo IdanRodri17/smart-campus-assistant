@@ -152,18 +152,12 @@ def generate_answer(
             messages=messages,
             temperature=0.3,  # Low temperature for factual answers
             max_tokens=500,
+            response_format={"type": "json_object"},
         )
 
         inference_time_ms = int((time.time() - start_time) * 1000)
         result_text = response.choices[0].message.content.strip()
         tokens_used = response.usage.total_tokens if response.usage else 0
-
-        # Parse JSON response from LLM
-        if result_text.startswith("```"):
-            result_text = result_text.split("```")[1]
-            if result_text.startswith("json"):
-                result_text = result_text[4:]
-            result_text = result_text.strip()
 
         result = json.loads(result_text)
 

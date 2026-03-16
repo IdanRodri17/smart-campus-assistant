@@ -32,6 +32,12 @@ jobs:
           cd backend
           pip install -r requirements.txt
 
+      - name: Scan dependencies for vulnerabilities (pip-audit)
+        run: |
+          pip install pip-audit
+          cd backend
+          pip-audit -r requirements.txt --severity medium
+
       - name: Run linter (flake8)
         run: |
           pip install flake8

@@ -47,10 +47,10 @@
                     <div class="message-bubble">
                         <p>Welcome! I'm the Smart Campus Assistant. Ask me about:</p>
                         <div class="suggestion-chips">
-                            <button class="chip" onclick="askSuggestion('What are the office hours for Dr. Cohen?')">📅 Office hours</button>
-                            <button class="chip" onclick="askSuggestion('When is the Python exam?')">📝 Exam schedules</button>
-                            <button class="chip" onclick="askSuggestion('Where is the cafeteria?')">🏫 Campus info</button>
-                            <button class="chip" onclick="askSuggestion('I can\\'t log into the student portal')">💻 Technical help</button>
+                            <button class="chip" onclick="askSuggestion('What are the office hours for Dr. Cohen?')" aria-label="Ask about office hours">📅 Office hours</button>
+                            <button class="chip" onclick="askSuggestion('When is the Python exam?')" aria-label="Ask about exam schedules">📝 Exam schedules</button>
+                            <button class="chip" onclick="askSuggestion('Where is the cafeteria?')" aria-label="Ask about campus info">🏫 Campus info</button>
+                            <button class="chip" onclick="askSuggestion('I can\\'t log into the student portal')" aria-label="Ask about technical help">💻 Technical help</button>
                         </div>
                     </div>
                 </div>
@@ -62,14 +62,15 @@
     <!-- ── Input Area ── -->
     <footer class="input-area">
         <div class="input-container">
-            <input 
-                type="text" 
-                id="questionInput" 
+            <input
+                type="text"
+                id="questionInput"
                 placeholder="Ask a question about campus..."
                 maxlength="500"
                 autocomplete="off"
+                aria-label="Type your campus question"
             >
-            <button id="sendBtn" onclick="sendQuestion()">
+            <button id="sendBtn" onclick="sendQuestion()" aria-label="Send question">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>

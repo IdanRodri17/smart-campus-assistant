@@ -131,17 +131,10 @@ def classify_question(question: str) -> tuple[QuestionCategory, str]:
             ],
             temperature=0.0,  # Deterministic classification
             max_tokens=100,
+            response_format={"type": "json_object"},
         )
 
         result_text = response.choices[0].message.content.strip()
-
-        # Parse JSON response
-        # Handle potential markdown code blocks
-        if result_text.startswith("```"):
-            result_text = result_text.split("```")[1]
-            if result_text.startswith("json"):
-                result_text = result_text[4:]
-            result_text = result_text.strip()
 
         result = json.loads(result_text)
         category = QuestionCategory(result["category"])
