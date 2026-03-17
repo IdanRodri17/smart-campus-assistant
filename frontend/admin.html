@@ -140,7 +140,7 @@
 
         .content-preview { color: var(--text-secondary); max-width: 420px; line-height: 1.5; }
         .date-cell { color: var(--text-light); white-space: nowrap; }
-        .actions-cell { display: flex; gap: 8px; }
+        .actions-cell { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
 
         /* ── Sync status ── */
         #syncStatus {
@@ -188,6 +188,124 @@
         .cat-office_hours    { background: #fce4ec; color: #c62828; }
         .cat-exam_schedules  { background: #e8f4fd; color: #1565c0; }
         .cat-campus_services { background: #e8f5e9; color: #2e7d32; }
+
+        /* ── Chunk panel ── */
+        .chunks-panel { background: #f4f9f6; border-top: 2px solid var(--primary-light); }
+        .chunks-panel table { font-size: 12px; }
+        .chunks-panel th {
+            background: #eaf4ef; padding: 7px 14px; font-size: 11px;
+            color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;
+            font-weight: 700; border-bottom: 1px solid var(--border);
+        }
+        .chunks-panel td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .chunks-panel tr:last-child td { border-bottom: none; }
+        .chunk-text { color: var(--text); line-height: 1.5; max-width: 560px; }
+        .chunk-edit-ta {
+            width: 100%; min-height: 80px; padding: 8px 10px;
+            border: 1.5px solid var(--primary); border-radius: 6px;
+            font-size: 12px; font-family: monospace; resize: vertical; outline: none;
+        }
+
+        /* ── Bulk Import ── */
+        .bulk-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+        }
+        .bulk-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+        .bulk-card .bulk-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
+        .bulk-template {
+            background: #f6f7f9; border: 1px solid var(--border); border-radius: 8px;
+            padding: 12px 14px; font-family: monospace; font-size: 12px;
+            color: var(--text-secondary); white-space: pre; overflow-x: auto;
+            margin-bottom: 16px; line-height: 1.5;
+        }
+        .bulk-inputs { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; }
+        .bulk-textarea {
+            flex: 1; min-width: 260px; min-height: 110px; padding: 10px 12px;
+            border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-family: monospace; color: var(--text);
+            background: var(--bg); outline: none; resize: vertical;
+            transition: border-color 0.2s; line-height: 1.5;
+        }
+        .bulk-textarea:focus { border-color: var(--primary); background: white; }
+        .bulk-textarea.invalid { border-color: var(--error); }
+        .bulk-file-col { display: flex; flex-direction: column; gap: 8px; justify-content: flex-start; }
+        .bulk-file-col label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .bulk-file-col input[type="file"] {
+            font-size: 12px; font-family: var(--font); color: var(--text);
+            border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 7px 10px; background: var(--bg); cursor: pointer; width: 220px;
+        }
+        .bulk-footer { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .bulk-preview { font-size: 13px; color: var(--text-secondary); }
+        .bulk-preview strong { color: var(--primary); }
+        .bulk-status {
+            margin-top: 12px; font-size: 13px; padding: 10px 14px;
+            border-radius: 8px; display: none;
+        }
+        .bulk-status.loading { background: #eff6ff; color: #1d4ed8; display: block; }
+        .bulk-status.success { background: var(--primary-light); color: var(--primary); display: block; }
+        .bulk-status.error   { background: #fef2f2; color: var(--error); display: block; }
+
+        /* ── Tabs ── */
+        .tab-nav {
+            display: flex; gap: 4px; margin-bottom: 28px;
+            border-bottom: 2px solid var(--border);
+        }
+        .tab-btn {
+            height: 40px; padding: 0 20px; border: none; background: transparent;
+            font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+            font-family: var(--font); transition: all 0.15s;
+        }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-btn:hover:not(.active) { color: var(--text); }
+
+        /* ── Stats cards ── */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px 24px;
+        }
+        .stat-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .stat-value { font-size: 30px; font-weight: 700; color: var(--text); line-height: 1; }
+        .stat-sub   { font-size: 12px; color: var(--text-light); margin-top: 5px; }
+
+        /* ── Filter bar ── */
+        .filter-bar {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px;
+            display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;
+        }
+        .filter-field { display: flex; flex-direction: column; gap: 5px; }
+        .filter-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .filter-field select, .filter-field input {
+            height: 36px; padding: 0 10px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 13px; font-family: var(--font);
+            color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s;
+        }
+        .filter-field select:focus, .filter-field input:focus { border-color: var(--primary); background: white; }
+        .filter-field input[type="number"] { width: 76px; }
+
+        /* ── Confidence badges ── */
+        .conf-high { color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+        .conf-mid  { color: #92400e; background: #fef3c7; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+        .conf-low  { color: #991b1b; background: #fee2e2; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+
+        /* ── Interaction rows ── */
+        .int-row { cursor: pointer; }
+        .int-row:hover td { background: #f0f7f3 !important; }
+        .int-detail td { padding: 0; border-bottom: 1px solid var(--border); }
+        .int-detail-inner {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+            padding: 16px 20px; background: #f9fafb;
+        }
+        .int-detail-block { padding: 0 12px; }
+        .int-detail-block:first-child { border-right: 1px solid var(--border); padding-left: 0; }
+        .int-detail-block label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px; }
+        .int-detail-block p { font-size: 13px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -222,6 +340,15 @@
 
     <main>
 
+        <!-- ── Tab Navigation ── -->
+        <div class="tab-nav">
+            <button class="tab-btn active" id="tabBtnContent" onclick="showTab('content')">📋 Content Manager</button>
+            <button class="tab-btn" id="tabBtnInteractions" onclick="showTab('interactions')">📊 Interactions</button>
+        </div>
+
+        <!-- ══════════ CONTENT TAB ══════════ -->
+        <div id="tabContent">
+
         <!-- Add / Edit form -->
         <div class="form-card">
             <h2 id="formHeading">➕ Add New Record</h2>
@@ -248,6 +375,39 @@
         <!-- Sync notice -->
         <div class="notice" id="syncNotice" style="display:none">
             ⚠️ You have unsaved embedding changes. Click <strong>Sync Embeddings</strong> in the header so the AI uses your latest content.
+        </div>
+
+        <!-- ── Bulk Import ── -->
+        <div class="bulk-card">
+            <h2>📦 Bulk Import Records</h2>
+            <p class="bulk-sub">Paste a JSON array or upload a <code>.json</code> file to insert up to 100 records at once. Embeddings are synced automatically.</p>
+
+            <div class="bulk-template">[
+  {"category": "office_hours",   "title": "Dr. Cohen Office Hours", "content": "Sunday 10:00–12:00, Building A Room 210"},
+  {"category": "general_info",   "title": "Library Hours",          "content": "Open Mon–Thu 08:00–22:00, Fri 08:00–14:00"},
+  {"category": "exam_schedules", "title": "Python Exam — June 2025","content": "Date: June 15, Hall B, 09:00–12:00"},
+  {"category": "schedule",       "title": "CS101 Lecture",          "content": "Every Monday 10:00–12:00, Building C Room 301"}
+]</div>
+
+            <div class="bulk-inputs">
+                <textarea
+                    class="bulk-textarea"
+                    id="bulkJson"
+                    placeholder='Paste JSON array here…'
+                    oninput="onBulkInput()"
+                ></textarea>
+                <div class="bulk-file-col">
+                    <label>Or upload a .json file</label>
+                    <input type="file" id="bulkFile" accept=".json" onchange="loadBulkFile()">
+                </div>
+            </div>
+
+            <div class="bulk-footer">
+                <button class="btn btn-primary" onclick="importBulk()" id="bulkImportBtn" disabled>⬆️ Import</button>
+                <span class="bulk-preview" id="bulkPreview">No records parsed yet.</span>
+                <button class="btn btn-secondary" onclick="clearBulk()">✕ Clear</button>
+            </div>
+            <div class="bulk-status" id="bulkStatus"></div>
         </div>
 
         <!-- ── PDF Upload ── -->
@@ -288,10 +448,11 @@
                         <th>Category</th>
                         <th>Chunks</th>
                         <th>Uploaded</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="docsBody">
-                    <tr><td colspan="5" class="empty-state">No PDFs uploaded yet.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No PDFs uploaded yet.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -319,6 +480,76 @@
                 </tbody>
             </table>
         </div>
+
+        </div><!-- end #tabContent -->
+
+        <!-- ══════════ INTERACTIONS TAB ══════════ -->
+        <div id="tabInteractions" style="display:none">
+
+            <!-- Stats cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="stat-label">Total Questions</div><div class="stat-value" id="statTotal">—</div></div>
+                <div class="stat-card"><div class="stat-label">Avg Confidence</div><div class="stat-value" id="statConf">—</div><div class="stat-sub" id="statLowConf"></div></div>
+                <div class="stat-card"><div class="stat-label">Avg Response Time</div><div class="stat-value" id="statRT">—</div><div class="stat-sub" id="statRatings"></div></div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="filter-field">
+                    <label>Category</label>
+                    <select id="iFilterCat" onchange="loadInteractions()">
+                        <option value="">All Categories</option>
+                        <option value="schedule">📅 Schedule</option>
+                        <option value="general_info">ℹ️ General Info</option>
+                        <option value="technical_issue">🔧 Technical</option>
+                        <option value="office_hours">🕐 Office Hours</option>
+                        <option value="exam_schedules">📝 Exam Schedules</option>
+                        <option value="campus_services">🏫 Campus Services</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Min Confidence</label>
+                    <input type="number" id="iFilterMin" min="0" max="1" step="0.05" placeholder="0.0" onchange="loadInteractions()">
+                </div>
+                <div class="filter-field">
+                    <label>Max Confidence</label>
+                    <input type="number" id="iFilterMax" min="0" max="1" step="0.05" placeholder="1.0" onchange="loadInteractions()">
+                </div>
+                <div class="filter-field">
+                    <label>Limit</label>
+                    <select id="iFilterLimit" onchange="loadInteractions()">
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="loadInteractions()">↺ Refresh</button>
+                <button class="btn btn-secondary" onclick="exportCsv()" title="Download filtered interactions as CSV">⬇️ Export CSV</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-header">
+                <h2>Interactions <span class="record-count" id="intCount"></span></h2>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Question</th>
+                            <th>Category</th>
+                            <th>Confidence</th>
+                            <th>Response</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody id="intBody">
+                        <tr><td colspan="6" class="empty-state">Loading…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- end #tabInteractions -->
 
     </main>
 </div>
@@ -364,6 +595,8 @@ function logout() {
 }
 
 // ── Records ───────────────────────────────────────────────────────────────────
+const _recordsData = {}; // id → record object
+
 async function loadRecords() {
     const res = await apiReq("GET", "/records");
     if (res.ok) renderRecords(await res.json());
@@ -372,6 +605,8 @@ async function loadRecords() {
 function renderRecords(records) {
     const body = document.getElementById("recordsBody");
     document.getElementById("recordCount").textContent = `(${records.length})`;
+
+    records.forEach(r => { _recordsData[r.id] = r; });
 
     if (records.length === 0) {
         body.innerHTML = `<tr><td colspan="6"><div class="empty-state">No records yet.<p>Use the form above to add campus information.</p></div></td></tr>`;
@@ -386,8 +621,8 @@ function renderRecords(records) {
             <td><div class="content-preview">${esc(r.content.length > 140 ? r.content.slice(0, 140) + "…" : r.content)}</div></td>
             <td class="date-cell">${r.updated_at.slice(0, 10)}</td>
             <td class="actions-cell">
-                <button class="btn btn-secondary" onclick="startEdit(${r.id}, '${esc(r.category)}', ${JSON.stringify(esc(r.title))}, ${JSON.stringify(esc(r.content))})">✏️ Edit</button>
-                <button class="btn btn-danger" onclick="deleteRecord(${r.id}, ${JSON.stringify(esc(r.title))})">🗑️ Delete</button>
+                <button class="btn btn-secondary" onclick="startEdit(${r.id})">✏️ Edit</button>
+                <button class="btn btn-danger"    onclick="deleteRecord(${r.id})">🗑️ Delete</button>
             </td>
         </tr>
     `).join("");
@@ -403,12 +638,13 @@ function resetForm() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function startEdit(id, category, title, content) {
+function startEdit(id) {
+    const r = _recordsData[id];
     editingId = id;
     document.getElementById("formHeading").textContent = `✏️ Editing Record #${id}`;
-    document.getElementById("fCategory").value = category;
-    document.getElementById("fTitle").value = title;
-    document.getElementById("fContent").value = content;
+    document.getElementById("fCategory").value = r.category;
+    document.getElementById("fTitle").value = r.title;
+    document.getElementById("fContent").value = r.content;
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -437,7 +673,8 @@ async function saveRecord() {
     }
 }
 
-async function deleteRecord(id, title) {
+async function deleteRecord(id) {
+    const title = _recordsData[id]?.title || `#${id}`;
     if (!confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await apiReq("DELETE", `/records/${id}`);
     if (res.ok) {
@@ -543,15 +780,18 @@ function setUploadStatus(type, message) {
     el.textContent = message;
 }
 
+const _docsData = {}; // id → document object
+
 async function loadDocuments() {
     const res = await apiReq("GET", "/documents");
     if (!res.ok) return;
     const docs = await res.json();
     const body = document.getElementById("docsBody");
     document.getElementById("docCount").textContent = `(${docs.length})`;
+    docs.forEach(d => { _docsData[d.id] = d; });
 
     if (docs.length === 0) {
-        body.innerHTML = `<tr><td colspan="5" class="empty-state">No PDFs uploaded yet.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="6" class="empty-state">No PDFs uploaded yet.</td></tr>`;
         return;
     }
 
@@ -562,8 +802,137 @@ async function loadDocuments() {
             <td><span class="cat-badge cat-${d.category}">${formatCat(d.category)}</span></td>
             <td style="font-family:monospace">${d.chunks_count} chunks</td>
             <td class="date-cell">${d.uploaded_at.slice(0, 10)}</td>
+            <td class="actions-cell">
+                <button class="btn btn-secondary" id="chunks-btn-${d.id}" onclick="toggleChunks(${d.id})">📄 Chunks</button>
+                <button class="btn btn-danger" onclick="deleteDocument(${d.id})">🗑️ Delete</button>
+            </td>
+        </tr>
+        <tr id="chunks-row-${d.id}" style="display:none">
+            <td colspan="6" style="padding:0">
+                <div id="chunks-content-${d.id}" class="chunks-panel"></div>
+            </td>
         </tr>
     `).join("");
+}
+
+// ── Chunk management ──────────────────────────────────────────────────────────
+const _chunksData = {}; // chunk_id → raw content text
+
+async function toggleChunks(docId) {
+    const row = document.getElementById(`chunks-row-${docId}`);
+    const btn = document.getElementById(`chunks-btn-${docId}`);
+    if (row.style.display === "none") {
+        row.style.display = "";
+        btn.textContent = "▲ Chunks";
+        await loadChunks(docId);
+    } else {
+        row.style.display = "none";
+        btn.textContent = "📄 Chunks";
+    }
+}
+
+async function loadChunks(docId) {
+    const panel = document.getElementById(`chunks-content-${docId}`);
+    panel.innerHTML = `<p style="padding:12px 16px;color:var(--text-secondary);font-size:13px">⏳ Loading chunks…</p>`;
+
+    const res = await apiReq("GET", `/documents/${docId}/chunks`);
+    if (!res.ok) {
+        panel.innerHTML = `<p style="padding:12px 16px;color:var(--error);font-size:13px">Failed to load chunks.</p>`;
+        return;
+    }
+
+    const chunks = await res.json();
+    if (!chunks.length) {
+        panel.innerHTML = `<p style="padding:12px 16px;color:var(--text-secondary);font-size:13px">No chunks found for this document.</p>`;
+        return;
+    }
+
+    chunks.forEach(c => { _chunksData[c.id] = c.content; });
+
+    panel.innerHTML = `
+        <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+                <th style="width:60px">#</th>
+                <th>Content</th>
+                <th style="width:140px">Actions</th>
+            </tr></thead>
+            <tbody>
+                ${chunks.map(c => `
+                <tr id="chunk-row-${c.id}">
+                    <td style="color:var(--text-light)">${c.chunk_index}</td>
+                    <td id="chunk-cell-${c.id}">
+                        <div class="chunk-text">${esc(c.content.length > 200 ? c.content.slice(0, 200) + "…" : c.content)}</div>
+                    </td>
+                    <td>
+                        <div class="actions-cell" id="chunk-actions-${c.id}">
+                            <button class="btn btn-secondary" onclick="startEditChunk(${c.id}, ${docId})">✏️</button>
+                            <button class="btn btn-danger"    onclick="deleteChunk(${c.id}, ${docId})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>`).join("")}
+            </tbody>
+        </table>`;
+}
+
+function startEditChunk(chunkId, docId) {
+    const raw = _chunksData[chunkId] || "";
+    document.getElementById(`chunk-cell-${chunkId}`).innerHTML =
+        `<textarea class="chunk-edit-ta" id="chunk-ta-${chunkId}">${esc(raw)}</textarea>`;
+    document.getElementById(`chunk-actions-${chunkId}`).innerHTML = `
+        <div class="actions-cell">
+            <button class="btn btn-primary"   onclick="saveChunk(${chunkId}, ${docId})">💾</button>
+            <button class="btn btn-secondary" onclick="loadChunks(${docId})">✕</button>
+        </div>`;
+}
+
+async function saveChunk(chunkId, docId) {
+    const newContent = document.getElementById(`chunk-ta-${chunkId}`).value.trim();
+    if (!newContent) { alert("Content cannot be empty."); return; }
+
+    const btn = document.querySelector(`#chunk-actions-${chunkId} .btn-primary`);
+    btn.disabled = true;
+    btn.textContent = "⏳";
+
+    const res = await apiReq("PUT", `/chunks/${chunkId}`, { content: newContent });
+    if (res.ok) {
+        _chunksData[chunkId] = newContent;
+        await loadChunks(docId);
+    } else {
+        const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+        alert(`Save failed: ${err.detail}`);
+        btn.disabled = false;
+        btn.textContent = "💾";
+    }
+}
+
+async function deleteChunk(chunkId, docId) {
+    if (!confirm(`Delete chunk #${chunkId}?\n\nThis removes it from the AI knowledge base.`)) return;
+    const res = await apiReq("DELETE", `/chunks/${chunkId}`);
+    if (res.ok) {
+        delete _chunksData[chunkId];
+        await loadChunks(docId);
+        await loadDocuments(); // refresh chunk count
+    } else {
+        alert("Delete failed.");
+    }
+}
+
+async function deleteDocument(id) {
+    const d = _docsData[id] || {};
+    const filename = d.filename || `#${id}`;
+    const chunks   = d.chunks_count ?? 0;
+    const confirmed = confirm(
+        `Delete "${filename}"?\n\nThis will permanently remove ${chunks} chunk${chunks !== 1 ? "s" : ""} from the knowledge base. The AI will no longer have access to this document.\n\nThis cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    const res = await apiReq("DELETE", `/documents/${id}`);
+    if (res.ok) {
+        await loadDocuments();
+    } else {
+        const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+        alert(`Delete failed: ${err.detail}`);
+    }
 }
 
 function formatCat(c) {
@@ -581,6 +950,276 @@ function esc(str) {
     const d = document.createElement("div");
     d.textContent = str;
     return d.innerHTML;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+let interactionsLoaded = false;
+
+function showTab(tab) {
+    document.getElementById("tabContent").style.display       = tab === "content"      ? "" : "none";
+    document.getElementById("tabInteractions").style.display  = tab === "interactions" ? "" : "none";
+    document.getElementById("tabBtnContent").classList.toggle("active",      tab === "content");
+    document.getElementById("tabBtnInteractions").classList.toggle("active", tab === "interactions");
+
+    if (tab === "interactions" && !interactionsLoaded) {
+        interactionsLoaded = true;
+        loadStats();
+        loadInteractions();
+    }
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+async function loadStats() {
+    const res = await apiReq("GET", "/stats");
+    if (!res.ok) return;
+    const s = await res.json();
+
+    document.getElementById("statTotal").textContent = s.total_interactions.toLocaleString();
+
+    const confPct = (s.avg_confidence * 100).toFixed(1) + "%";
+    document.getElementById("statConf").textContent = confPct;
+    document.getElementById("statLowConf").textContent =
+        `${s.low_confidence_count} below 70% confidence`;
+
+    document.getElementById("statRT").textContent =
+        s.avg_response_time_ms ? Math.round(s.avg_response_time_ms) + " ms" : "—";
+    document.getElementById("statRatings").textContent =
+        s.total_ratings
+            ? `👍 ${s.positive_ratings}  👎 ${s.negative_ratings}`
+            : "No ratings yet";
+}
+
+// ── Interactions ──────────────────────────────────────────────────────────────
+async function loadInteractions() {
+    const cat    = document.getElementById("iFilterCat").value;
+    const minC   = document.getElementById("iFilterMin").value;
+    const maxC   = document.getElementById("iFilterMax").value;
+    const limit  = document.getElementById("iFilterLimit").value;
+
+    let qs = `?limit=${limit}&offset=0`;
+    if (cat)  qs += `&category=${encodeURIComponent(cat)}`;
+    if (minC) qs += `&min_confidence=${minC}`;
+    if (maxC) qs += `&max_confidence=${maxC}`;
+
+    document.getElementById("intBody").innerHTML =
+        `<tr><td colspan="6" class="empty-state">Loading…</td></tr>`;
+
+    const res = await apiReq("GET", "/interactions" + qs);
+    if (!res.ok) {
+        document.getElementById("intBody").innerHTML =
+            `<tr><td colspan="6" class="empty-state" style="color:var(--error)">Failed to load interactions.</td></tr>`;
+        return;
+    }
+
+    const data = await res.json();
+    renderInteractions(data);
+}
+
+function renderInteractions(rows) {
+    const body = document.getElementById("intBody");
+    document.getElementById("intCount").textContent = `(${rows.length})`;
+
+    if (!rows.length) {
+        body.innerHTML = `<tr><td colspan="6"><div class="empty-state">No interactions found.<p>Matching filters returned no results.</p></div></td></tr>`;
+        return;
+    }
+
+    body.innerHTML = rows.map(r => {
+        const q     = r.question || "";
+        const short = q.length > 80 ? q.slice(0, 80) + "…" : q;
+        const confClass = r.confidence >= 0.8 ? "conf-high" : r.confidence >= 0.7 ? "conf-mid" : "conf-low";
+        const confTxt   = r.confidence != null ? (r.confidence * 100).toFixed(0) + "%" : "—";
+        const rt        = r.response_time_ms != null ? r.response_time_ms + " ms" : "—";
+        const rating    = r.rating === true ? "👍" : r.rating === false ? "👎" : "—";
+        const ts        = r.created_at ? r.created_at.slice(0, 16).replace("T", " ") : "—";
+
+        return `
+        <tr class="int-row" onclick="toggleDetail(${r.id})">
+            <td class="date-cell" style="font-size:12px;white-space:nowrap">${ts}</td>
+            <td style="max-width:320px">${esc(short)}</td>
+            <td><span class="cat-badge cat-${r.category}">${formatCat(r.category)}</span></td>
+            <td><span class="${confClass}">${confTxt}</span></td>
+            <td class="date-cell">${rt}</td>
+            <td style="font-size:16px;text-align:center">${rating}</td>
+        </tr>
+        <tr class="int-detail" id="detail-${r.id}" style="display:none">
+            <td colspan="6">
+                <div class="int-detail-inner">
+                    <div class="int-detail-block">
+                        <label>Question</label>
+                        <p>${esc(r.question || "")}</p>
+                    </div>
+                    <div class="int-detail-block">
+                        <label>Answer</label>
+                        <p>${esc(r.answer || "")}</p>
+                        ${r.feedback ? `<label style="margin-top:12px">Feedback</label><p>${esc(r.feedback)}</p>` : ""}
+                    </div>
+                </div>
+            </td>
+        </tr>`;
+    }).join("");
+}
+
+function toggleDetail(id) {
+    const row = document.getElementById(`detail-${id}`);
+    if (row) row.style.display = row.style.display === "none" ? "" : "none";
+}
+
+// ── Bulk Import ───────────────────────────────────────────────────────────────
+const ALLOWED_CATS = new Set([
+    "schedule", "general_info", "technical_issue",
+    "office_hours", "exam_schedules", "campus_services",
+]);
+
+let _bulkRecords = null; // parsed + validated records ready to send
+
+function onBulkInput() {
+    parseBulk(document.getElementById("bulkJson").value.trim());
+}
+
+function loadBulkFile() {
+    const file = document.getElementById("bulkFile").files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        document.getElementById("bulkJson").value = e.target.result;
+        parseBulk(e.target.result.trim());
+    };
+    reader.readAsText(file);
+}
+
+function parseBulk(raw) {
+    const ta      = document.getElementById("bulkJson");
+    const preview = document.getElementById("bulkPreview");
+    const btn     = document.getElementById("bulkImportBtn");
+    _bulkRecords  = null;
+    btn.disabled  = true;
+
+    if (!raw) {
+        ta.classList.remove("invalid");
+        preview.innerHTML = "No records parsed yet.";
+        return;
+    }
+
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    } catch {
+        ta.classList.add("invalid");
+        preview.innerHTML = `<span style="color:var(--error)">✗ Invalid JSON</span>`;
+        return;
+    }
+
+    if (!Array.isArray(parsed)) {
+        ta.classList.add("invalid");
+        preview.innerHTML = `<span style="color:var(--error)">✗ Must be a JSON array</span>`;
+        return;
+    }
+    if (parsed.length === 0) {
+        ta.classList.add("invalid");
+        preview.innerHTML = `<span style="color:var(--error)">✗ Array is empty</span>`;
+        return;
+    }
+    if (parsed.length > 100) {
+        ta.classList.add("invalid");
+        preview.innerHTML = `<span style="color:var(--error)">✗ Max 100 records (got ${parsed.length})</span>`;
+        return;
+    }
+
+    // Validate each record
+    const errors = [];
+    parsed.forEach((r, i) => {
+        if (!r.category || !ALLOWED_CATS.has(r.category))
+            errors.push(`#${i + 1}: invalid category "${r.category}"`);
+        if (!r.title || typeof r.title !== "string" || !r.title.trim())
+            errors.push(`#${i + 1}: missing title`);
+        if (!r.content || typeof r.content !== "string" || !r.content.trim())
+            errors.push(`#${i + 1}: missing content`);
+    });
+
+    if (errors.length) {
+        ta.classList.add("invalid");
+        preview.innerHTML = `<span style="color:var(--error)">✗ ${errors.slice(0, 3).join(" · ")}${errors.length > 3 ? ` (+${errors.length - 3} more)` : ""}</span>`;
+        return;
+    }
+
+    ta.classList.remove("invalid");
+    _bulkRecords = parsed;
+    btn.disabled = false;
+    preview.innerHTML = `<strong>${parsed.length}</strong> record${parsed.length !== 1 ? "s" : ""} ready to import`;
+}
+
+async function importBulk() {
+    if (!_bulkRecords) return;
+
+    const btn = document.getElementById("bulkImportBtn");
+    btn.disabled = true;
+    setBulkStatus("loading", `⏳ Importing ${_bulkRecords.length} records and syncing embeddings…`);
+
+    const res = await apiReq("POST", "/bulk-seed", { records: _bulkRecords });
+
+    if (res.ok) {
+        const data = await res.json();
+        setBulkStatus("success", `✓ ${data.message}`);
+        clearBulk();
+        await loadRecords();
+        showSyncNotice();
+        document.getElementById("syncNotice").style.display = "none"; // embeddings already synced
+    } else {
+        const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+        setBulkStatus("error", `✗ Import failed: ${err.detail}`);
+        btn.disabled = false;
+    }
+}
+
+function clearBulk() {
+    document.getElementById("bulkJson").value = "";
+    document.getElementById("bulkFile").value = "";
+    document.getElementById("bulkJson").classList.remove("invalid");
+    document.getElementById("bulkPreview").innerHTML = "No records parsed yet.";
+    document.getElementById("bulkImportBtn").disabled = true;
+    _bulkRecords = null;
+}
+
+function setBulkStatus(type, message) {
+    const el = document.getElementById("bulkStatus");
+    el.className = `bulk-status ${type}`;
+    el.textContent = message;
+}
+
+// ── CSV Export ────────────────────────────────────────────────────────────────
+async function exportCsv() {
+    const cat = document.getElementById("iFilterCat").value;
+    let qs = cat ? `?category=${encodeURIComponent(cat)}` : "";
+
+    const btn = document.querySelector("[onclick='exportCsv()']");
+    btn.disabled = true;
+    btn.textContent = "⏳ Exporting…";
+
+    try {
+        const res = await fetch(API_BASE + "/export/csv" + qs, {
+            headers: { "X-Admin-Key": apiKey },
+        });
+
+        if (!res.ok) {
+            alert("Export failed: " + (await res.text()));
+            return;
+        }
+
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement("a");
+        const today = new Date().toISOString().slice(0, 10);
+        a.href     = url;
+        a.download = `interactions_export_${today}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        alert("Export error: " + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "⬇️ Export CSV";
+    }
 }
 </script>
 

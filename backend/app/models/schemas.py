@@ -3,8 +3,8 @@ Pydantic models for API request/response schemas.
 Defines the contract between frontend and backend.
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, field_validator
+from typing import Literal, Optional
 from datetime import datetime
 from enum import Enum
 
@@ -121,3 +121,30 @@ class CampusRecordUpdate(BaseModel):
     category: Optional[str] = None
     title: Optional[str] = None
     content: Optional[str] = None
+
+
+ALLOWED_CATEGORIES = Literal[
+    "schedule", "general_info", "technical_issue",
+    "office_hours", "exam_schedules", "campus_services",
+]
+
+
+class BulkSeedItem(BaseModel):
+    """A single record in a bulk import request."""
+
+    category: ALLOWED_CATEGORIES
+    title: str = Field(..., min_length=1, max_length=200)
+    content: str = Field(..., min_length=1)
+    metadata: dict = Field(default_factory=dict)
+
+
+class BulkSeedRequest(BaseModel):
+    """Request body for POST /api/admin/bulk-seed."""
+
+    records: list[BulkSeedItem] = Field(..., min_length=1, max_length=100)
+
+
+class ChunkUpdate(BaseModel):
+    """Request body for PUT /api/admin/chunks/{chunk_id}."""
+
+    content: str = Field(..., min_length=1)

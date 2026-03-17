@@ -6,17 +6,11 @@ pydantic-settings==2.7.1
 python-dotenv==1.0.1
 
 # Database
-supabase==2.11.0
-asyncpg==0.30.0
 sqlalchemy==2.0.36
 psycopg2-binary==2.9.10
 
-
 # AI / LLM
 openai==1.58.1
-langchain==0.3.14
-langchain-openai==0.3.0
-langchain-community==0.3.14
 tiktoken==0.8.0
 
 # Caching
